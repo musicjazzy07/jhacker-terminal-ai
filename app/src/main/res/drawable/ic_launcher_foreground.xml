@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Jhacker Terminal skull mark: neon green (#00FF41) skull on black.
+     108-unit adaptive-icon canvas (visible 18..90). Replaces the upstream gem mark. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Faint green glow behind the skull -->
+    <path
+        android:fillColor="#1A00FF41"
+        android:pathData="M14,54a40,40 0,1 0,80 0a40,40 0,1 0,-80 0Z" />
+
+    <!-- Skull: cranium + jaw, neon green -->
+    <path
+        android:fillColor="#FF00FF41"
+        android:pathData="M54,22C37,22 28,35 28,50C28,58 30,63 33,66L33,74C33,79 37,82 42,82L66,82C71,82 75,79 75,74L75,66C78,63 80,58 80,50C80,35 71,22 54,22Z" />
+
+    <!-- Highlight on the left of the dome -->
+    <path
+        android:fillColor="#FF7CFF9E"
+        android:pathData="M37,33C41,28 47,25 51,25C45,28 41,33 39,39C38,37 37,35 37,33Z" />
+
+    <!-- Eye sockets -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M36,50a7,9 0,1 0,14 0a7,9 0,1 0,-14 0Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M58,50a7,9 0,1 0,14 0a7,9 0,1 0,-14 0Z" />
+
+    <!-- Nose -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M54,60L49,70L59,70Z" />
+
+    <!-- Teeth -->
+    <path
+        android:pathData="M45,74L45,82M54,74L54,82M63,74L63,82"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round" />
+</vector>
