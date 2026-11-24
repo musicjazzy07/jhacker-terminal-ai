@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Jhacker Terminal</string>
-    <string name="anti_term_name">Jhacker Terminal</string>
+    <string name="anti_term_name">JhackerTerm</string>
     <string name="termux_name">Termux</string>
     <string name="accessibility_service_name">Jhacker Terminal Android Automation</string>
     <string name="accessibility_service_description">Lets the AI agents you connect to Jhacker Terminal\'s Android Automation MCP read the screen, take screenshots, tap, swipe, type and open apps on this phone. It only acts when an agent calls one of those tools.</string>

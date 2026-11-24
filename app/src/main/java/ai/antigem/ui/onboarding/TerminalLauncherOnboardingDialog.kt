@@ -192,14 +192,14 @@ fun TerminalLauncherOnboardingDialog(
                                         )
                                     } else {
                                         ai.antigem.ui.components.AppIconImage(
-                                            contentDescription = "AntiTerm",
+                                            contentDescription = "JhackerTerm",
                                             modifier = Modifier.matchParentSize()
                                         )
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = if (!isEnabled) "Hidden" else if (selectedStyle == TerminalLauncherManager.STYLE_TERMUX) "Termux" else "AntiTerm",
+                                    text = if (!isEnabled) "Hidden" else if (selectedStyle == TerminalLauncherManager.STYLE_TERMUX) "Termux" else "JhackerTerm",
                                     fontSize = 11.5.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = if (!isEnabled) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
@@ -303,7 +303,7 @@ fun TerminalLauncherOnboardingDialog(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     ai.antigem.ui.components.AppIconImage(
-                                        contentDescription = "AntiTerm",
+                                        contentDescription = "JhackerTerm",
                                         modifier = Modifier.matchParentSize()
                                     )
                                 }
@@ -312,7 +312,7 @@ fun TerminalLauncherOnboardingDialog(
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "AntiTerm",
+                                        text = "JhackerTerm",
                                         fontSize = 13.5.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.onSurface

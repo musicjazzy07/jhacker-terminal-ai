@@ -33,6 +33,20 @@ data class RepoInstallProgress(val phase: String, val bytesDone: Long, val bytes
     val fraction: Float? get() = if (bytesTotal > 0 && phase in setOf("downloading", "extracting")) (bytesDone.toFloat() / bytesTotal).coerceIn(0f, 1f) else null
 }
 
+/**
+ * Display-only rebrand for text fetched from plugin repositories (repo titles,
+ * plugin names/descriptions): shows "Jhacker Terminal" / "JhackerTerm" where
+ * the upstream name still appears. Never persist transformed text; repo slugs
+ * ("dipeshkrydv/antigem_plugins") are untouched because "_" is a word char,
+ * and "Anti-…" words (Anti-Offline, anti-ad) don't match either.
+ */
+fun rebrandForDisplay(text: String): String {
+    var out = text
+    out = out.replace(Regex("(?i)\\bAntiGem\\b"), "Jhacker Terminal")
+    out = out.replace(Regex("(?i)\\bAntiTerm\\b"), "JhackerTerm")
+    return out
+}
+
 /** Dotted numeric versions, as shown and compared in the plugin screens. */
 object PluginVersions {
     fun label(version: String) = if (version.isBlank()) "no version" else "v" + version.removePrefix("v")

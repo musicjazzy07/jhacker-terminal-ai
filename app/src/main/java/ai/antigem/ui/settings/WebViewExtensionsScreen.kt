@@ -21,6 +21,7 @@ import ai.antigem.ui.browser.BrowserExtension
 import ai.antigem.ui.browser.BrowserExtensionManager
 import ai.antigem.ui.browser.PluginRepositories
 import ai.antigem.ui.browser.PluginVersions
+import ai.antigem.ui.browser.rebrandForDisplay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -126,7 +127,7 @@ fun WebViewExtensionsScreen(onChanged: () -> Unit) {
                         IconButton(enabled = !busy, onClick = { removing = extension; deleteData = false }) { Icon(Icons.Outlined.Delete, "Remove", tint = MaterialTheme.colorScheme.error) }
                         Switch(checked = extension.isEnabled, enabled = !busy, onCheckedChange = { enabled -> runOperation { manager.setEnabled(extension.id, enabled); null } })
                     }
-                    if (extension.description.isNotBlank()) Text(extension.description, style = MaterialTheme.typography.bodySmall)
+                    if (extension.description.isNotBlank()) Text(rebrandForDisplay(extension.description), style = MaterialTheme.typography.bodySmall)
                     val source = extension.source
                     val repo = source?.let { s -> PluginRepositories.repos.firstOrNull { it.slug.equals(s.repo, ignoreCase = true) && it.ref == s.ref } }
                     val offered = PluginRepositories.updateFor(extension)

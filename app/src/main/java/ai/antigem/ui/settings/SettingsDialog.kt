@@ -2347,7 +2347,7 @@ private fun AppearanceSubScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     ai.antigem.ui.components.AppIconImage(
-                                        contentDescription = "AntiTerm",
+                                        contentDescription = "JhackerTerm",
                                         modifier = Modifier.matchParentSize()
                                     )
                                 }
@@ -2356,7 +2356,7 @@ private fun AppearanceSubScreen(
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "AntiTerm",
+                                        text = "JhackerTerm",
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.onSurface

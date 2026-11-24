@@ -22,7 +22,7 @@ enum class HomeAction(
     NEW_OPENCODE("new_opencode", "OpenCode chat", "A new OpenCode chat", 0xFF10B981, R.drawable.ic_home_add_chat, AgentKind.OPENCODE),
     NEW_CODEX("new_codex", "Codex chat", "A new Codex chat", 0xFF8B5CF6, R.drawable.ic_home_add_chat, AgentKind.CODEX),
     TERMINAL("terminal", "Terminal", "The terminal page", 0xFF334155, R.drawable.ic_home_terminal),
-    TERMINAL_WINDOW("terminal_window", "AntiTerm", "The terminal in a window of its own", 0xFF1E293B, R.drawable.ic_home_window),
+    TERMINAL_WINDOW("terminal_window", "JhackerTerm", "The terminal in a window of its own", 0xFF1E293B, R.drawable.ic_home_window),
     BROWSER("browser", "Browser", "Jhacker Terminal's web browser", 0xFF0EA5E9, R.drawable.ic_home_browser),
     IDE("ide", "Code", "The code editor", 0xFF6366F1, R.drawable.ic_home_code),
     FILES("files", "Files", "The file manager", 0xFFF59E0B, R.drawable.ic_home_folder),

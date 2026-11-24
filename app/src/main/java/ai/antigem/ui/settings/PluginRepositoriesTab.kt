@@ -18,6 +18,7 @@ import ai.antigem.ui.browser.PluginRepo
 import ai.antigem.ui.browser.PluginRepositories
 import ai.antigem.ui.browser.PluginVersions
 import ai.antigem.ui.browser.RepoPlugin
+import ai.antigem.ui.browser.rebrandForDisplay
 import kotlinx.coroutines.launch
 
 /**
@@ -86,7 +87,7 @@ fun PluginRepositoriesTab(busy: Boolean, runOperation: (suspend () -> String?) -
                 Column(Modifier.padding(start = 14.dp, end = 6.dp, top = 8.dp, bottom = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Column(Modifier.weight(1f)) {
-                            Text(listing?.title ?: repo.label, style = MaterialTheme.typography.titleMedium)
+                            Text(rebrandForDisplay(listing?.title ?: repo.label), style = MaterialTheme.typography.titleMedium)
                             if (listing?.title != null && listing.title != repo.label) Text(repo.label, style = MaterialTheme.typography.bodySmall)
                         }
                         if (repo.label in PluginRepositories.loading) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
@@ -105,7 +106,7 @@ fun PluginRepositoriesTab(busy: Boolean, runOperation: (suspend () -> String?) -
     pending?.let { (repo, plugin) ->
         val taken = folderTaken(folder)
         AlertDialog(
-            onDismissRequest = { pending = null }, title = { Text("Install ${plugin.name}") },
+            onDismissRequest = { pending = null }, title = { Text("Install ${rebrandForDisplay(plugin.name)}") },
             text = { Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("A plugin already uses the folder ${plugin.path.substringAfterLast('/')}. Choose another folder name for this one.")
                 OutlinedTextField(value = folder, onValueChange = { folder = it }, label = { Text("Folder name") }, singleLine = true,
@@ -125,8 +126,8 @@ private fun RepoPluginRow(repo: PluginRepo, plugin: RepoPlugin, busy: Boolean, o
         PluginIcon(plugin.iconUrl, 36.dp)
         Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
-            Text("${plugin.name} · ${PluginVersions.label(plugin.version)}", style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            if (plugin.description.isNotBlank()) Text(plugin.description, style = MaterialTheme.typography.bodySmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text("${rebrandForDisplay(plugin.name)} · ${PluginVersions.label(plugin.version)}", style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            if (plugin.description.isNotBlank()) Text(rebrandForDisplay(plugin.description), style = MaterialTheme.typography.bodySmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
             if (installed != null) Text(when {
                 comparison == null -> "Installed ${PluginVersions.label(installed.version)} as ${installed.folderName}"
                 comparison > 0 -> "Update available: ${PluginVersions.label(installed.version)} → ${PluginVersions.label(plugin.version)}"

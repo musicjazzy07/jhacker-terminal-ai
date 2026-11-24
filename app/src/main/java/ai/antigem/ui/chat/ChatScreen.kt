@@ -16,6 +16,7 @@ import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollBy
@@ -48,6 +49,9 @@ import androidx.compose.runtime.*
 import ai.antigem.data.preferences.AuthPreferences
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.painterResource
+import ai.antigem.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -2089,6 +2093,16 @@ fun ChatScreen(
                     val agyMissingHere = isAgyChat && agyNotInstalled
                     val isExistingChat = messages.isEmpty() && isExistingConversation && isLoadingConversation && !agyMissingHere
                     Log.d("CHAT_OPEN_DEBUG", "🖥️ [ChatScreen Render] convId=${currentConv?.id}, title='${currentConv?.title}', isLoading=$isLoadingConversation, isExisting=$isExistingChat, msgCount=${messages.size}, error=$conversationError, isServerStopped=$isServerStopped")
+
+                    // Jhacker Terminal skull watermark behind the chat (subtle; text stays readable).
+                    Image(
+                        painter = painterResource(R.drawable.ic_launcher_foreground),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(280.dp)
+                            .alpha(0.12f)
+                    )
 
                     if (isAgyChat && isServerStopped && messages.isEmpty()) {
                         BoxWithConstraints(
