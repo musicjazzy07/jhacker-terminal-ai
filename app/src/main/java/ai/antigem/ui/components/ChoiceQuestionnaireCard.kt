@@ -764,4 +764,5 @@ private fun QuestionPanelStatusRow(toolCall: ToolCall, questionnaire: ChoiceQues
                 }
             }
         }
-    }"""
+    }
+}

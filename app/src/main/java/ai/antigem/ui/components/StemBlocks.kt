@@ -636,4 +636,5 @@ private fun StemFullscreenDialog(kind: StemKind, code: String, html: String?, on
                 }
             }
         }
-    }"""
+    }
+}

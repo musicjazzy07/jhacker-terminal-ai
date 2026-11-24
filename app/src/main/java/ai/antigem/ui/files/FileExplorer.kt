@@ -1569,4 +1569,3 @@ private fun FolderTabs(
         }
     }
 }
-"
