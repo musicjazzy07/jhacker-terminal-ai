@@ -280,6 +280,77 @@ class BrowserSessionManager private constructor() {
         }
 
         /**
+         * Routing decision for a URL the WebView is about to load.
+         * Pure (no Android framework calls) so unit tests can cover it on the JVM.
+         */
+        sealed interface NonHttpUrlAction {
+            /** Let the WebView load the URL itself (http/https/file/about/data). */
+            data object LetWebViewHandle : NonHttpUrlAction
+
+            /**
+             * Open the URL outside the WebView.
+             * [intentUri] is the original URL — for `intent://` URLs the caller must
+             * parse it with `Intent.parseUri(uri, Intent.URI_INTENT_SCHEME)`; for other
+             * schemes an `ACTION_VIEW` intent with the URI as data is enough.
+             * [fallbackUrl] is the `S.browser_fallback_url` from an intent:// URL, to
+             * load in the WebView when the intent cannot be launched (no app handles it).
+             */
+            data class LaunchExternalIntent(val intentUri: String, val fallbackUrl: String? = null) : NonHttpUrlAction
+
+            /** No handler exists — swallow silently; the WebView must NOT try to load it. */
+            data object Swallow : NonHttpUrlAction
+        }
+
+        /**
+         * Decides what to do with a URL about to load in a browser tab.
+         *
+         * A WebView cannot load non-http(s) schemes itself — handing them back shows
+         * `net::ERR_UNKNOWN_URL_SCHEME` (e.g. Google sign-in inside v0.app fires an
+         * `intent://accounts.google.com/devicephoneverification/...` URL). Those must
+         * be opened as external intents instead, falling back to the
+         * `S.browser_fallback_url` the intent carries when nothing can handle it.
+         */
+        fun resolveNonHttpUrl(url: String): NonHttpUrlAction {
+            val trimmed = url.trim()
+            if (trimmed.isBlank() || !trimmed.contains(":")) return NonHttpUrlAction.LetWebViewHandle
+            return when (trimmed.substringBefore(":").lowercase()) {
+                "http", "https", "file", "about", "data" -> NonHttpUrlAction.LetWebViewHandle
+                "intent" -> NonHttpUrlAction.LaunchExternalIntent(
+                    intentUri = trimmed,
+                    fallbackUrl = extractBrowserFallbackUrl(trimmed)
+                )
+                // tel: / mailto: (and anything else — market:, geo:, sms:, ...) go out
+                // as an external intent; if nothing handles it the caller swallows
+                // it instead of letting the WebView show an error page.
+                else -> NonHttpUrlAction.LaunchExternalIntent(intentUri = trimmed)
+            }
+        }
+
+        /** Extracts `S.browser_fallback_url` from an `intent://...#Intent;...;end` URI, or null. */
+        fun extractBrowserFallbackUrl(intentUri: String): String? {
+            // NOTE: do NOT use substringAfter(..., return null) here — the `return`
+            // would run while evaluating the argument, so the function would always
+            // return null. Split on the marker explicitly instead.
+            val marker = "#Intent;"
+            val markerIndex = intentUri.indexOf(marker)
+            if (markerIndex < 0) return null
+            val intentPart = intentUri.substring(markerIndex + marker.length)
+            for (part in intentPart.split(";")) {
+                if (part == "end") break
+                if (part.startsWith("S.browser_fallback_url=")) {
+                    val raw = part.removePrefix("S.browser_fallback_url=")
+                    if (raw.isBlank()) return null
+                    return try {
+                        java.net.URLDecoder.decode(raw, "UTF-8")
+                    } catch (_: Exception) {
+                        raw
+                    }
+                }
+            }
+            return null
+        }
+
+        /**
          * Injects script to spoof Desktop screen width/height, platform, client hints, and desktop viewport meta tag.
          * This prevents responsive sites (like YouTube, Google, Facebook, Twitter, Reddit) from falling back to mobile.
          * Google sign-in pages are left untouched: their bot checks flag overridden navigator properties.
@@ -1215,13 +1286,48 @@ class BrowserSessionManager private constructor() {
                         }
                         return false
                     }
+                    // Non-http(s) schemes (intent://, tel:, mailto:, ...) cannot load in a
+                    // WebView — handing them back shows net::ERR_UNKNOWN_URL_SCHEME (seen
+                    // when Google sign-in inside v0.app fires an intent:// URL). Route them
+                    // through the pure resolver and never let the WebView try them.
+                    return when (val action = resolveNonHttpUrl(uri.toString())) {
+                        NonHttpUrlAction.LetWebViewHandle -> false
+                        is NonHttpUrlAction.LaunchExternalIntent -> launchExternalIntent(view, action)
+                        NonHttpUrlAction.Swallow -> true
+                    }
+                }
+
+                /**
+                 * Launches a non-http(s) URL outside the WebView. `intent://` URLs must be
+                 * parsed with Intent.parseUri (they carry the real intent in their fragment);
+                 * a raw ACTION_VIEW with the intent:// URI as data never resolves. Always
+                 * returns true: the WebView must never attempt these URLs itself. A bad
+                 * intent never crashes the app — on failure the browser_fallback_url loads
+                 * in the WebView if the intent carried one, otherwise it is swallowed.
+                 */
+                private fun launchExternalIntent(view: WebView?, action: NonHttpUrlAction.LaunchExternalIntent): Boolean {
                     return try {
-                        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, uri)
+                        val intent = if (action.intentUri.startsWith("intent://", ignoreCase = true)) {
+                            android.content.Intent.parseUri(action.intentUri, android.content.Intent.URI_INTENT_SCHEME)
+                        } else {
+                            android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse(action.intentUri))
+                        }
                         intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
                         context.startActivity(intent)
                         true
+                    } catch (_: android.content.ActivityNotFoundException) {
+                        // Nothing can handle the intent (e.g. the named package is not
+                        // installed) — fall back to the browser URL the intent carried, if any.
+                        val fallback = action.fallbackUrl
+                        if (fallback != null) {
+                            tab.url = fallback
+                            view?.loadUrl(fallback)
+                        }
+                        true
                     } catch (_: Exception) {
-                        false
+                        // Malformed intent URI, SecurityException (non-exported target), ...
+                        // Never crash, and never let the WebView show an error page.
+                        true
                     }
                 }
             }
