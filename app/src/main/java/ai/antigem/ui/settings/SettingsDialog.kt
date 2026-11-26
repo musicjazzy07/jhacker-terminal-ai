@@ -275,7 +275,7 @@ fun SettingsDialog(
     pluginActionErrorMessage: String? = null,
     onClearPluginStatus: () -> Unit = {},
     floatingSwitcherOrientation: String = "VERTICAL",
-    floatingSwitcherItems: List<String> = listOf("chat", "ide", "terminal", "browser", "notes", "files"),
+    floatingSwitcherItems: List<String> = listOf("chat", "ide", "terminal", "browser", "v0", "notes", "files"),
     floatingSwitcherAutoCollapseSec: Int = 0,
     onSetFloatingSwitcherOrientation: (String) -> Unit = {},
     floatingSwitcherHandleIcon: String = "grid",
@@ -2054,7 +2054,7 @@ private fun AppearanceSubScreen(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
 
-                val allAvailable = listOf("chat", "ide", "terminal", "browser", "notes", "files", "run")
+                val allAvailable = listOf("chat", "ide", "terminal", "browser", "v0", "notes", "files", "run")
                 val currentItems = floatingSwitcherItems.toMutableList()
                 val displayedList = currentItems + allAvailable.filterNot { currentItems.contains(it) }
 
@@ -2065,6 +2065,7 @@ private fun AppearanceSubScreen(
                         "ide" -> "IDE (Code Editor)"
                         "terminal" -> "Terminal"
                         "browser" -> "Web Browser"
+                        "v0" -> "v0 — AI App Builder"
                         "notes" -> "Notes & To-dos"
                         "files" -> "Files (file explorer)"
                         "run" -> "Run (build & run commands)"
@@ -2075,6 +2076,7 @@ private fun AppearanceSubScreen(
                         "ide" -> Icons.Outlined.Code
                         "terminal" -> Icons.Outlined.Terminal
                         "browser" -> Icons.Outlined.Language
+                        "v0" -> Icons.Outlined.AutoAwesome
                         "notes" -> Icons.Outlined.EditNote
                         "files" -> Icons.Outlined.FolderOpen
                         "run" -> Icons.Outlined.PlayCircle

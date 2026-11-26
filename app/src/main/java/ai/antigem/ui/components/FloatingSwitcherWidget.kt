@@ -106,6 +106,7 @@ fun FloatingSwitcherWidget(
     onNavigateToChat: () -> Unit,
     onNavigateToIde: () -> Unit,
     onNavigateToBrowser: () -> Unit,
+    onNavigateToV0: () -> Unit = {},
     onNavigateToTerminal: () -> Unit,
     onNavigateToNotes: () -> Unit = {},
     onNavigateToFiles: () -> Unit = {},
@@ -169,6 +170,7 @@ fun FloatingSwitcherWidget(
             "chat" -> onNavigateToChat()
             "ide" -> onNavigateToIde()
             "browser" -> onNavigateToBrowser()
+            "v0" -> onNavigateToV0()
             "terminal" -> onNavigateToTerminal()
             "notes" -> onNavigateToNotes()
             "files" -> onNavigateToFiles()
@@ -333,6 +335,7 @@ fun FloatingSwitcherWidget(
                     "chat" -> currentViewMode == AppViewMode.CHAT
                     "ide" -> currentViewMode == AppViewMode.IDE
                     "browser" -> currentViewMode == AppViewMode.BROWSER
+                    "v0" -> currentViewMode == AppViewMode.V0
                     "terminal" -> currentViewMode == AppViewMode.TERMINAL
                     "notes" -> currentViewMode == AppViewMode.NOTES
                     "files" -> currentViewMode == AppViewMode.FILES
@@ -344,6 +347,7 @@ fun FloatingSwitcherWidget(
                     "ide" -> Icons.Outlined.Code
                     "terminal" -> Icons.Outlined.Terminal
                     "browser" -> Icons.Outlined.Language
+                    "v0" -> Icons.Outlined.AutoAwesome
                     "notes" -> Icons.Outlined.EditNote
                     "files" -> Icons.Outlined.FolderOpen
                     "run" -> Icons.Outlined.PlayCircle
@@ -354,6 +358,7 @@ fun FloatingSwitcherWidget(
                     "ide" -> "IDE"
                     "terminal" -> "Terminal"
                     "browser" -> "Browser"
+                    "v0" -> "v0 — AI App Builder"
                     "notes" -> "Notes"
                     "files" -> "Files"
                     "run" -> "Run"

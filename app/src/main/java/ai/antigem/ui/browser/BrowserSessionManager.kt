@@ -268,6 +268,17 @@ class BrowserSessionManager private constructor() {
         private const val MAX_LOGS_PER_QUERY = 150
         private const val DEFAULT_TIMEOUT_MS = 15000L
 
+        /** v0 by Vercel — the AI app builder, opened from the app's v0 entry (WebView, no API key needed). */
+        const val V0_URL = "https://v0.app"
+
+        /** True for v0.app pages (the site itself and any path under it). */
+        fun isV0Url(url: String): Boolean {
+            val trimmed = url.trim()
+            return trimmed == V0_URL ||
+                trimmed.startsWith("$V0_URL/") ||
+                trimmed.startsWith("$V0_URL?")
+        }
+
         /**
          * Injects script to spoof Desktop screen width/height, platform, client hints, and desktop viewport meta tag.
          * This prevents responsive sites (like YouTube, Google, Facebook, Twitter, Reddit) from falling back to mobile.
@@ -748,6 +759,20 @@ class BrowserSessionManager private constructor() {
             t
         }
         return targetTab
+    }
+
+    /**
+     * Opens v0.app in the browser: reuses the existing v0 tab when there is one,
+     * otherwise opens it in a new tab. Tabs are shared with the Browser page, so
+     * the v0 tab stays where the user left it when they switch pages.
+     */
+    fun openV0Tab(): BrowserTabSession {
+        val existing = tabs.find { isV0Url(it.url) }
+        if (existing != null) {
+            activeTabId = existing.id
+            return existing
+        }
+        return openUrl(V0_URL, newTab = true)
     }
 
     fun reloadTab(tabId: String? = null) {

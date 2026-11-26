@@ -32,6 +32,8 @@ enum class AppViewMode {
     IDE,
     TERMINAL,
     BROWSER,
+    /** v0 by Vercel: the same in-app browser, opened on a v0.app tab */
+    V0,
     NOTES,
     FILES,
     /** The Run screen: a folder's commands and their live output (runs keep going on other screens) */
@@ -136,6 +138,7 @@ class MainActivity : ComponentActivity() {
                     "IDE" -> AppViewMode.IDE
                     "TERMINAL" -> AppViewMode.TERMINAL
                     "BROWSER" -> AppViewMode.BROWSER
+                    "V0" -> AppViewMode.V0
                     "NOTES" -> AppViewMode.NOTES
                     "FILES" -> AppViewMode.FILES
                     "RUN" -> AppViewMode.RUN
@@ -176,6 +179,11 @@ class MainActivity : ComponentActivity() {
                         "BROWSER" -> {
                             previousViewMode = currentViewMode
                             currentViewMode = AppViewMode.BROWSER
+                        }
+
+                        "V0" -> {
+                            previousViewMode = currentViewMode
+                            currentViewMode = AppViewMode.V0
                         }
 
                         "NOTES" -> {
@@ -338,7 +346,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     } else {
-                        BackHandler(enabled = currentViewMode != AppViewMode.CHAT && currentViewMode != AppViewMode.BROWSER) {
+                        BackHandler(enabled = currentViewMode != AppViewMode.CHAT && currentViewMode != AppViewMode.BROWSER && currentViewMode != AppViewMode.V0) {
                             currentViewMode =
                                 if (previousViewMode != currentViewMode && previousViewMode != AppViewMode.BROWSER) previousViewMode else AppViewMode.CHAT
                         }
@@ -468,12 +476,21 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
-                                // Persistent Web Preview Browser Screen (Retains open tabs, WebViews, state & navigation)
+                                // Persistent Web Preview Browser Screen (Retains open tabs, WebViews, state & navigation).
+                                // The v0 page shows the same browser: entering it opens v0.app in a tab, and the tabs
+                                // are shared, so the v0 tab stays where the user left it on the Browser page too.
+                                // A second BrowserScreen would fight over the same WebViews, so there is only one.
+                                // Entering the v0 page opens v0.app (reusing its tab when open)
+                                LaunchedEffect(currentViewMode) {
+                                    if (currentViewMode == AppViewMode.V0) {
+                                        ai.antigem.ui.browser.BrowserSessionManager.instance.openV0Tab()
+                                    }
+                                }
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .graphicsLayer {
-                                            val isVisible = currentViewMode == AppViewMode.BROWSER
+                                            val isVisible = currentViewMode == AppViewMode.BROWSER || currentViewMode == AppViewMode.V0
                                             alpha = if (isVisible) 1f else 0f
                                             translationX = if (isVisible) 0f else 20000f
                                         }
@@ -481,7 +498,7 @@ class MainActivity : ComponentActivity() {
                                         .pageSnapshotSource(AppViewMode.BROWSER, pageOverviewInUse)
                                 ) {
                                     BrowserScreen(
-                                        isVisible = currentViewMode == AppViewMode.BROWSER,
+                                        isVisible = currentViewMode == AppViewMode.BROWSER || currentViewMode == AppViewMode.V0,
                                         onClose = {
                                             currentViewMode =
                                                 if (previousViewMode == AppViewMode.BROWSER) AppViewMode.CHAT else previousViewMode
@@ -658,6 +675,7 @@ class MainActivity : ComponentActivity() {
                                         "chat" -> AppViewMode.CHAT
                                         "ide" -> AppViewMode.IDE
                                         "browser" -> AppViewMode.BROWSER
+                                        "v0" -> AppViewMode.V0
                                         "notes" -> AppViewMode.NOTES
                                         "files" -> AppViewMode.FILES
                                         "run" -> AppViewMode.RUN
@@ -714,6 +732,12 @@ class MainActivity : ComponentActivity() {
                                     onNavigateToBrowser = {
                                         previousViewMode = currentViewMode
                                         currentViewMode = AppViewMode.BROWSER
+                                    },
+                                    onNavigateToV0 = {
+                                        previousViewMode = currentViewMode
+                                        currentViewMode = AppViewMode.V0
+                                        // every tap (re)opens the v0 tab, even when already on the v0 page
+                                        ai.antigem.ui.browser.BrowserSessionManager.instance.openV0Tab()
                                     },
                                     onNavigateToTerminal = openTerminalFromSwitcher,
                                     onNavigateToNotes = {

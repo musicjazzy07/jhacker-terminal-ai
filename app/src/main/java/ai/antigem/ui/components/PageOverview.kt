@@ -54,6 +54,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ViewList
 import androidx.compose.material.icons.outlined.Apps
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.AutoAwesomeMosaic
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Close
@@ -253,6 +254,7 @@ private fun overviewPage(id: String): OverviewPage? = when (id.lowercase()) {
     "ide" -> OverviewPage("ide", AppViewMode.IDE, "IDE", Icons.Outlined.Code)
     "terminal" -> OverviewPage("terminal", AppViewMode.TERMINAL, "Terminal", Icons.Outlined.Terminal)
     "browser" -> OverviewPage("browser", AppViewMode.BROWSER, "Browser", Icons.Outlined.Language)
+    "v0" -> OverviewPage("v0", AppViewMode.V0, "v0 — AI App Builder", Icons.Outlined.AutoAwesome)
     "notes" -> OverviewPage("notes", AppViewMode.NOTES, "Notes", Icons.Outlined.EditNote)
     "files" -> OverviewPage("files", AppViewMode.FILES, "Files", Icons.Outlined.FolderOpen)
     "run" -> OverviewPage("run", AppViewMode.RUN, "Run", Icons.Outlined.PlayCircle)
